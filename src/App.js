@@ -6,48 +6,37 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
 
 const schema = yup.object().shape({
   email: yup.string().required("is a required field").email("Enter a valid e-mail address"),
-  password: yup.string().min(8).max(32).matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,32}$/,
-    'PPassword must contain 8 to 32 characters and must include letters in mixed case and at least 1 numberassword must meet the criteria')
+  password: yup.string().matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d!@#$%^&*]{8,32}$/,
+    'Password must contain 8 to 32 characters and must include letters in mixed case and at least 1 numberassword must meet the criteria')
 });
+let statusOk = 0;
 
 function App() {
-  const { handleSubmit, register, formState: { errors }, reset } = useForm({
+  const { handleSubmit, register, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
-  const [statusOk, setStatusOk] = useState(false);
-  let i = 0;
-  // const formSubmit = data => {
-  //   axios
-  //     .post(
-  //       data,
-  //       setStatusOk(true)
-  //     )
-  //     .then(response => { console.log(response.data) })
-  //     .catch(error => { console.log(error.data) });
-  // };
-  // console.log(i);
+
   const submitForm = (data) => {
     console.log(data);
-    i = 1;
-    // console.log(i);
-    return i;
+    statusOk = 1;
   }
-  console.log(i);
+
+  console.log(statusOk)
+
   return (
     <div className="App">
-      <form onSubmit={handleSubmit(submitForm)}>
+      <form onSubmit={handleSubmit(submitForm)} className={`user-form ${statusOk ? "success" : ""}`}>
         <div>
           <label htmlFor="email">E-mail:</label>
-          <input type="email" placeholder="E-mail address" id="email" name="email" {...register("email")} required />
+          <input type="email" placeholder="E-mail address" id="email" name="email" {...register("email")} />
           <p>{errors.email?.message}</p>
         </div>
         <div>
           <label htmlFor="password">Password:</label>
-          <input type="password" placeholder="Password" name="password" {...register("password")} required />
+          <input type="password" placeholder="Password" name="password" {...register("password")} />
           <p>{errors.password?.message}</p>
         </div>
         <button type="submit" placeholder="Log in">Log In</button>
